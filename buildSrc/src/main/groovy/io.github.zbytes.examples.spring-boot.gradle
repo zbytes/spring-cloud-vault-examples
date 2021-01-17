@@ -1,0 +1,8 @@
+plugins {
+    id 'io.github.zbytes.examples.java'
+    id 'io.github.zbytes.examples.spring-bom'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+}

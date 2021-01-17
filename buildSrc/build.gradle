@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springBootVersion', "2.4.2")
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    compile("io.spring.gradle:dependency-management-plugin:1.0.10.RELEASE")
+}

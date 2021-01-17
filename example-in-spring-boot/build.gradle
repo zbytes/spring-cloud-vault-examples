@@ -1,0 +1,9 @@
+plugins {
+    id('io.github.zbytes.examples.java')
+    id('io.github.zbytes.examples.spring-boot')
+}
+
+dependencies {
+    implementation(project(':spring-boot-modules:order-service'))
+    implementation('org.postgresql:postgresql')
+}
