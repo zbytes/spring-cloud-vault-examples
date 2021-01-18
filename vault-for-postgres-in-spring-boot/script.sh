@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-VAULT_ADDR=http://localhost:8200
+VAULT_HOST=localhost
+VAULT_PORT=8200
+VAULT_ADDR=http://${VAULT_HOST}:${VAULT_PORT}
 
 launch() {
 
@@ -65,7 +67,7 @@ enableSecrets() {
   DATABASE_ROLE="${APPLICATION_NAME}-role"
   DATABASE_ROLE_POLICY="${APPLICATION_NAME}-policy"
 
-  KV_ROLE_POLICY="${APPLICATION_NAME}-kv-policy"
+  KV_ROLE_POLICY="kv-policy"
 
   DATABASE="PostgreSQL"
 
@@ -115,7 +117,7 @@ EOF
     "db_name": "postgresql",
     "creation_statements": [
     "CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}' INHERIT;",
-    "GRANT ALL ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"
+    "GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"
   ],
     "default_ttl": "2m",
     "max_ttl": "5m"
@@ -191,6 +193,7 @@ case ${option} in
   enableSecrets
   ;;
 --run)
+  loadVaultToken
   runApp
   ;;
 --simulate)

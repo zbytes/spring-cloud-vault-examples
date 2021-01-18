@@ -8,15 +8,15 @@ spring:
       app-role:
         role-id: ${spring.application.name}-role-id
       scheme: http
-      host: ${APPLICATION_VAULT_HOST:localhost}
-      port: ${APPLICATION_VAULT_PORT:8200}
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
       database:
         enabled: true
         role: ${spring.application.name}-role
-      config:
-        lifecycle:
-          # https://cloud.spring.io/spring-cloud-vault/reference/html/#vault-lease-renewal
-          min-renewal: 10
-          #Should be less than min-renewal period because we a going to use unrenewed credentials.
-          expiry-threshold: 5
-          lease-endpoints: sysleases
+#      config:
+#        lifecycle:
+#          # https://cloud.spring.io/spring-cloud-vault/reference/html/#vault-lease-renewal
+#          min-renewal: 10
+#          #Should be less than min-renewal period because we a going to use unrenewed credentials.
+#          expiry-threshold: 5
+#          lease-endpoints: sysleases
