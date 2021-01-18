@@ -24,16 +24,22 @@ unsealVault() {
 
   echo
   echo "--> unsealing Vault ..."
-  curl -X PUT -d '{ "key": "'${VAULT_KEY1}'" }' ${VAULT_ADDR}/v1/sys/unseal
+  curl -X PUT -d '{ "key": "'"${VAULT_KEY1}"'" }' ${VAULT_ADDR}/v1/sys/unseal
 
   echo
-  echo "--> Vault token: ${VAULT_TOKEN}"
+
   echo "--> Vault status"
   curl ${VAULT_ADDR}/v1/sys/init
+  tee vault_token.log <<EOF
+$VAULT_TOKEN
+EOF
 
 }
 
-VAULT_TOKEN=s.4kQKiiUWvtvx1QUnOeGWp6ub
+VAULT_TOKEN=$(cat vault_token.log)
+
+echo
+echo "--> Vault token: ${VAULT_TOKEN}"
 
 enableAppRoleAndKVEngine() {
 
@@ -103,8 +109,8 @@ EOF
 {
     "db_name": "postgresql",
     "creation_statements": [
-    "CREATE ROLE \"$DATABASE_ROLE\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}' INHERIT;",
-    "GRANT ro TO \"$DATABASE_ROLE\";"
+    "CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}' INHERIT;",
+    "GRANT ro TO \"{{name}}\";"
   ],
     "default_ttl": "2m",
     "max_ttl": "10m"
