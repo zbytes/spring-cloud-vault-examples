@@ -110,7 +110,7 @@ EOF
     "db_name": "postgresql",
     "creation_statements": [
     "CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}' INHERIT;",
-    "GRANT ro TO \"{{name}}\";"
+    "GRANT ALL ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"
   ],
     "default_ttl": "2m",
     "max_ttl": "10m"
