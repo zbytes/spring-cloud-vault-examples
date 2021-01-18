@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:12.1-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      start_period: 10s
+  vault:
+    image: vault:1.6.0
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./docker/vault/config/config.hcl:/vault/config/config.hcl
+    environment:
+      - VAULT_API_ADDR=http://0.0.0.0:8200
+    healthcheck:
+      test: "nc -z -v localhost 8200"
+      start_period: 10s
+    command: "vault server -config=/vault/config/config.hcl"
+    links:
+      - db

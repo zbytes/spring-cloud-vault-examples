@@ -1,6 +1,6 @@
 spring:
   application:
-    name: example-in-spring-boot
+    name: vault-for-postgres-in-spring-boot
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
 

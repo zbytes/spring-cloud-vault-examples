@@ -1,4 +1,5 @@
 rootProject.name = 'spring-cloud-vault-examples'
 include 'spring-boot-modules:order-service'
 findProject(':spring-boot-modules:order-service')?.name = 'order-service'
-include 'example-in-spring-boot'
+include 'vault-for-postgres-in-spring-boot'
+
