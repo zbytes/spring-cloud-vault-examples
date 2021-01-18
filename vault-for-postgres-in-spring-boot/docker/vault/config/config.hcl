@@ -1,3 +1,5 @@
+ui = true
+
 storage "file" {
   path = "/vault/data"
 }

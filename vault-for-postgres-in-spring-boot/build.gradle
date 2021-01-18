@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation(project(':spring-boot-modules:order-service'))
     implementation 'org.postgresql:postgresql'
+    implementation 'com.zaxxer:HikariCP'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     implementation 'org.springframework.cloud:spring-cloud-vault-config-databases'
 }

@@ -36,31 +36,26 @@ EOF
 
 }
 
-VAULT_TOKEN=$(cat vault_token.log)
+loadVaultToken() {
 
-echo
-echo "--> Vault token: ${VAULT_TOKEN}"
+  VAULT_TOKEN=$(cat vault_token.log)
 
-enableAppRoleAndKVEngine() {
+  echo
+  echo "--> Vault token: ${VAULT_TOKEN}"
+}
+
+enableAppRole() {
 
   echo
   echo "================"
-  echo "App Role And KV Engine"
+  echo "Enable App Role"
 
   echo
   echo "--> enabling the AppRole auth method ..."
   curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" -d '{"type": "approle"}' ${VAULT_ADDR}/v1/sys/auth/approle
-
-  echo
-  echo "--> enabling KV Secrets Engine ..."
-  curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" \
-    -d '{"type": "kv", "description": "Spring Boot KV Secrets Engine", "config": {"force_no_cache": true}}' \
-    ${VAULT_ADDR}/v1/sys/mounts/secret
-  echo
-
 }
 
-enableDatabaseSecrets() {
+enableSecrets() {
 
   APPLICATION_NAME="vault-for-postgres-in-spring-boot"
 
@@ -73,6 +68,16 @@ enableDatabaseSecrets() {
   KV_ROLE_POLICY="${APPLICATION_NAME}-kv-policy"
 
   DATABASE="PostgreSQL"
+
+  echo
+  echo "================"
+  echo "KV Secrets"
+  echo
+  echo "--> enabling KV Secrets ..."
+  curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" \
+    -d '{"type": "kv",  "path": "'${APPLICATION_NAME}'", "description": "Spring Boot KV Secrets Engine", "config": {"force_no_cache": true}}' \
+    ${VAULT_ADDR}/v1/sys/mounts/secret
+  echo
 
   echo
   echo "================"
@@ -113,7 +118,7 @@ EOF
     "GRANT ALL ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"
   ],
     "default_ttl": "2m",
-    "max_ttl": "10m"
+    "max_ttl": "5m"
 }
 EOF
 
@@ -158,6 +163,10 @@ EOF
 
 }
 
+runApp() {
+  ./gradlew :vault-for-postgres-in-spring-boot:bootRun
+}
+
 simulateGetOrders() {
 
   while true; do
@@ -177,8 +186,12 @@ case ${option} in
   unsealVault
   ;;
 --setup)
-  enableAppRoleAndKVEngine
-  enableDatabaseSecrets
+  loadVaultToken
+  enableAppRole
+  enableSecrets
+  ;;
+--run)
+  runApp
   ;;
 --simulate)
   simulateGetOrders
@@ -187,7 +200,7 @@ case ${option} in
   docker-compose rm -f -s -v
   ;;
 *)
-  echo "$(basename ${0}):usage: [--infra, --unseal, --setup, --simulate, --destroy]"
+  echo "$(basename ${0}):usage: [--infra, --unseal, --setup, --run, --simulate, --destroy]"
   exit 1 # Command to come out of the program with status 1
   ;;
 esac
