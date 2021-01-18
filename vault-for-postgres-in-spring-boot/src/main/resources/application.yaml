@@ -1,6 +1,24 @@
 spring:
-  application:
-    name: vault-for-postgres-in-spring-boot
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
 
+management:
+  endpoints:
+    web:
+      exposure.include: beans, env, health, info, metrics, mappings
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    groups-order: DESC
+
+logging:
+  level:
+    org.springframework.vault: DEBUG

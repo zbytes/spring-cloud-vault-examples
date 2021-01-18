@@ -5,5 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(':spring-boot-modules:order-service'))
-    implementation('org.postgresql:postgresql')
+    implementation 'org.postgresql:postgresql'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    implementation 'org.springframework.cloud:spring-cloud-vault-config-databases'
 }

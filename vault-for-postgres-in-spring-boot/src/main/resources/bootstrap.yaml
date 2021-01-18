@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: vault-for-postgres-in-spring-boot
+  cloud:
+    vault:
+      authentication: approle
+      app-role:
+        role-id: ${spring.application.name}-role-id
+      scheme: http
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
+      database:
+        enabled: true
+        role: ${spring.application.name}-role
