@@ -73,8 +73,11 @@ enableDatabaseSecrets() {
   echo "${DATABASE} Database Secrets"
 
   echo
-  echo "--> configuring Postgres plugin and connection ..."
+  echo "--> mounting database ..."
   curl -X POST -i -H "X-Vault-Token:${VAULT_TOKEN}" -d '{"type": "database"}' ${VAULT_ADDR}/v1/sys/mounts/database
+
+  echo
+  echo "--> configuring ${DATABASE} plugin and connection ..."
 
   tee payload.json <<EOF
 {
@@ -86,8 +89,6 @@ enableDatabaseSecrets() {
 }
 EOF
 
-  echo
-  echo "--> configuring ${DATABASE} plugin and connection ..."
   curl \
     --header "X-Vault-Token: ${VAULT_TOKEN}" --request POST \
     --data @payload.json \
