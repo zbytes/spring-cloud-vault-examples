@@ -75,8 +75,8 @@ enableSecrets() {
   echo
   echo "--> enabling KV Secrets ..."
   curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" \
-    -d '{"type": "kv",  "path": "'${APPLICATION_NAME}'", "description": "Spring Boot KV Secrets Engine", "config": {"force_no_cache": true}}' \
-    ${VAULT_ADDR}/v1/sys/mounts/secret
+    -d '{"type": "kv", "description": "Spring Boot KV Secrets Engine", "config": {"force_no_cache": true}}' \
+    ${VAULT_ADDR}/v1/sys/mounts/${APPLICATION_NAME}
   echo
 
   echo
@@ -164,7 +164,7 @@ EOF
 }
 
 runApp() {
-  ./gradlew :vault-for-postgres-in-spring-boot:bootRun
+  cd .. && ./gradlew :vault-for-postgres-in-spring-boot:bootRun
 }
 
 simulateGetOrders() {
