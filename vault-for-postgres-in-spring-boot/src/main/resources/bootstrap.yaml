@@ -13,6 +13,9 @@ spring:
       database:
         enabled: true
         role: ${spring.application.name}-role
+      kv:
+        application-name: ${spring.application.name}
+        default-context: ${spring.application.name}
 #      config:
 #        lifecycle:
 #          # https://cloud.spring.io/spring-cloud-vault/reference/html/#vault-lease-renewal

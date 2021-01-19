@@ -32,9 +32,20 @@ unsealVault() {
 
   echo "--> Vault status"
   curl ${VAULT_ADDR}/v1/sys/init
-  tee vault_token.log <<EOF
+
+  echo
+  if [ -z "${VAULT_TOKEN}" ]; then
+    echo "Vault Token:"
+    cat vault_token.log
+  else
+    echo "Vault Token:"
+    tee vault_token.log <<EOF
 $VAULT_TOKEN
 EOF
+
+  fi
+
+  xdg-open ${VAULT_ADDR}
 
 }
 
