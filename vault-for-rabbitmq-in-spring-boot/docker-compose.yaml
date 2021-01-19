@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  rabbitmq:
+    image: bitnami/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: "rabbitmq-diagnostics -q status"
+      start_period: 10s
+  vault:
+    image: vault:1.6.0
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./docker/vault/config/config.hcl:/vault/config/config.hcl
+    environment:
+      - VAULT_API_ADDR=http://0.0.0.0:8200
+    healthcheck:
+      test: "nc -z -v localhost 8200"
+      start_period: 10s
+    command: "vault server -config=/vault/config/config.hcl"
+    links:
+      - rabbitmq
