@@ -1,6 +1,6 @@
 plugins {
-    id('io.github.zbytes.examples.java')
-    id('io.github.zbytes.examples.spring-bom')
+    id('examples.java')
+    id('examples.spring-bom')
 }
 
 dependencies {

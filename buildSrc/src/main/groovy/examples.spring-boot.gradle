@@ -1,0 +1,8 @@
+plugins {
+    id 'examples.java'
+    id 'examples.spring-bom'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+}
