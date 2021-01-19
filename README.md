@@ -1,4 +1,4 @@
-# Spring Boot Vault Examples
+# Spring Cloud Vault Examples
 
 This repository contains thoroughly tested examples for spring cloud vault.
 
