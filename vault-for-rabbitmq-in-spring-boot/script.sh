@@ -32,9 +32,20 @@ unsealVault() {
 
   echo "--> Vault status"
   curl ${VAULT_ADDR}/v1/sys/init
-  tee vault_token.log <<EOF
+
+  echo
+  if [ -z "${VAULT_TOKEN}" ]; then
+    echo "Vault Token:"
+    cat vault_token.log
+  else
+    echo "Vault Token:"
+    tee vault_token.log <<EOF
 $VAULT_TOKEN
 EOF
+
+  fi
+
+  xdg-open ${VAULT_ADDR}
 
 }
 
@@ -48,22 +59,6 @@ loadVaultToken() {
 
 enableAppRole() {
 
-}
-
-enableSecrets() {
-
-  APP_NAME="vault-for-rabbitmq-in-spring-boot"
-  AUTH_APP_ROLE="${APP_NAME}-auth"
-  APP_ROLE_ID="${APP_NAME}-role-id"
-
-  DATABASE_USER="${APP_NAME}-user"
-  DATABASE_ROLE="${APP_NAME}-role"
-  DATABASE_ROLE_POLICY="${APP_NAME}-policy"
-
-  KV_ROLE_POLICY="${APP_NAME}-kv-policy"
-
-  DATABASE="PostgreSQL"
-
   echo
   echo "================"
   echo "Enable App Role"
@@ -71,6 +66,21 @@ enableSecrets() {
   echo
   echo "--> enabling the AppRole auth method ..."
   curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" -d '{"type": "approle"}' ${VAULT_ADDR}/v1/sys/auth/approle
+}
+
+enableSecrets() {
+
+  APPLICATION_NAME="vault-for-postgres-in-spring-boot"
+
+  CUSTOM_ROLE_ID="${APPLICATION_NAME}-role-id"
+  DATABASE_USER="${APPLICATION_NAME}-user"
+
+  DATABASE_ROLE="${APPLICATION_NAME}-role"
+  DATABASE_ROLE_POLICY="${APPLICATION_NAME}-policy"
+
+  KV_ROLE_POLICY="kv-policy"
+
+  DATABASE="PostgreSQL"
 
   echo
   echo "================"
@@ -79,7 +89,7 @@ enableSecrets() {
   echo "--> enabling KV Secrets ..."
   curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" \
     -d '{"type": "kv", "description": "Spring Boot KV Secrets Engine", "config": {"force_no_cache": true}}' \
-    ${VAULT_ADDR}/v1/sys/mounts/${APP_NAME}
+    ${VAULT_ADDR}/v1/sys/mounts/${APPLICATION_NAME}
   echo
 
   echo
@@ -146,8 +156,8 @@ EOF
   curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" -d '{"policies": ["'${DATABASE_ROLE_POLICY}'", "'${KV_ROLE_POLICY}'"], "bound_cidr_list": "0.0.0.0/0", "bind_secret_id": false}' ${VAULT_ADDR}/v1/auth/approle/role/${DATABASE_USER}
 
   echo
-  echo "--> update ROLE_ID with custom value '${APP_ROLE_ID}'"
-  curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" -d '{"role_id": "'${APP_ROLE_ID}'"}' ${VAULT_ADDR}/v1/auth/approle/role/${DATABASE_USER}/role-id
+  echo "--> update ROLE_ID with custom value '${CUSTOM_ROLE_ID}'"
+  curl -X POST -i -H "X-Vault-Token: ${VAULT_TOKEN}" -d '{"role_id": "'${CUSTOM_ROLE_ID}'"}' ${VAULT_ADDR}/v1/auth/approle/role/${DATABASE_USER}/role-id
 
   echo
   echo "--> fetching the identifier of the AppRole '${DATABASE_USER}' ..."
@@ -167,7 +177,7 @@ EOF
 }
 
 runApp() {
-  cd .. && ./gradlew :vault-for-rabbitmq-in-spring-boot:bootRun
+  cd .. && ./gradlew :vault-for-postgres-in-spring-boot:bootRun
 }
 
 simulateGetOrders() {
